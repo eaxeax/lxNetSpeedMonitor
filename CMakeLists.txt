@@ -1,0 +1,22 @@
+cmake_minimum_required(VERSION 3.10)
+project(netusage LANGUAGES C)
+find_package(PkgConfig QUIET)
+    if(PkgConfig_FOUND)
+        pkg_check_modules(lxpanel lxpanel)
+        if(lxpanel_LIBRARIES)
+            message(">>> Found lxpanel libraries")
+            include_directories(${lxpanel_INCLUDE_DIRS})
+            link_directories(${lxpanel_LIBRARY_DIRS})
+        else()
+            message(FATAL_ERROR  ">>> Could not find lxpanel.")
+        endif()
+
+    else()
+        message(FATAL_ERROR ">>> Could not find pkg-config")
+    endif()
+
+add_library(netusage SHARED netusage.c)
+target_link_libraries(netusage ${lxpanel_LIBRARIES})
+set_property(TARGET netusage PROPERTY C_STANDARD 99)
+#remove lib prefix
+set_target_properties(netusage PROPERTIES PREFIX "")
