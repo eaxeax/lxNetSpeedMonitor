@@ -20,3 +20,4 @@ target_link_libraries(netspeedmonitor ${lxpanel_LIBRARIES})
 set_property(TARGET netspeedmonitor PROPERTY C_STANDARD 99)
 #remove lib prefix
 set_target_properties(netspeedmonitor PROPERTIES PREFIX "")
+install(TARGETS netspeedmonitor DESTINATION "${lxpanel_PREFIX}/lib/lxpanel/plugins")
