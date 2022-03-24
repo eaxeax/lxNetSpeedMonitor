@@ -19,7 +19,7 @@ typedef struct
 
     config_setting_t* settings;
 
-}netusage;
+}netspeedmon;
 
 const char* catlookup="cat /sys/class/net/%s/statistics/%s";
 
@@ -31,7 +31,7 @@ const char* rateunits[]=
     "MB/s","Mb/s",
 };
 #define ARY_SZ(arr) sizeof(arr) / sizeof(arr[0])
-static gboolean update_cmd(netusage* plugin)
+static gboolean update_cmd(netspeedmon* plugin)
 {
     //deltas
     double dlt_tx_human=0.0, dlt_rx_human=0.0;
@@ -115,18 +115,18 @@ static gboolean update_cmd(netusage* plugin)
     return TRUE;
 }
 
-void netusage_delete(gpointer user_data)
+void netspeed_delete(gpointer user_data)
 {
-    netusage* nu= (netusage*)user_data;
+    netspeedmon* nu= (netspeedmon*)user_data;
     g_source_remove(nu->timer);
     g_free(nu->iface);
     g_free(nu);
 }
-GtkWidget* netusage_new(LXPanel* panel, config_setting_t* settings)
+GtkWidget* netspeed_new(LXPanel* panel, config_setting_t* settings)
 {
     //Alloc struct
-    netusage* plugin = g_new0(netusage, 1);
-    memset(plugin, 0, sizeof(netusage));
+    netspeedmon* plugin = g_new0(netspeedmon, 1);
+    memset(plugin, 0, sizeof(netspeedmon));
     plugin->settings=settings;
 
     //Update count
@@ -167,7 +167,7 @@ GtkWidget* netusage_new(LXPanel* panel, config_setting_t* settings)
     plugin->label = pLabel;
 
     //Bind struct
-    lxpanel_plugin_set_data(p, plugin, netusage_delete);
+    lxpanel_plugin_set_data(p, plugin, netspeed_delete);
 
     //done!
     return p;
@@ -176,7 +176,7 @@ GtkWidget* netusage_new(LXPanel* panel, config_setting_t* settings)
 gboolean apply_config(gpointer user_data)
 {
     GtkWidget *p = user_data;
-    netusage* nu = lxpanel_plugin_get_data(p);
+    netspeedmon* nu = lxpanel_plugin_get_data(p);
     config_group_set_string(nu->settings, "iface", nu->iface);
 
     int ru= nu->rateunit;
@@ -191,11 +191,11 @@ gboolean apply_config(gpointer user_data)
     return FALSE;
 }
 
-GtkWidget* netusage_config(LXPanel* panel, GtkWidget* p)
+GtkWidget* netspeed_config(LXPanel* panel, GtkWidget* p)
 {
     GtkWidget* dlg;
-    netusage* nu=lxpanel_plugin_get_data(p);
-    dlg=lxpanel_generic_config_dlg("Net Usage Configuration",
+    netspeedmon* nu=lxpanel_plugin_get_data(p);
+    dlg=lxpanel_generic_config_dlg("NetSpeedMonitor Configuration",
                                    panel,apply_config,p,
                                    "Interface",&nu->iface,CONF_TYPE_STR,
                                    "Rate unit (None=0, K=1, M=2)",&nu->rateunit,CONF_TYPE_INT,
@@ -205,13 +205,13 @@ GtkWidget* netusage_config(LXPanel* panel, GtkWidget* p)
     return dlg;
 }
 
-FM_DEFINE_MODULE(lxpanel_gtk, netusage);
+FM_DEFINE_MODULE(lxpanel_gtk, NetSpeedMonitor);
 
 //Descriptor
 LXPanelPluginInit fm_module_init_lxpanel_gtk =
 {
-    .name = "Net Usage",
-    .description = "Network Transfer Stats",
-    .new_instance = netusage_new,
-    .config=netusage_config
+    .name = "NetSpeedMonitor",
+    .description = "Show network speed",
+    .new_instance = netspeed_new,
+    .config=netspeed_config
 };
