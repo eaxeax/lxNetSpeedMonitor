@@ -1,5 +1,5 @@
 # lxNetSpeedMonitor
-Show network speed by interface. Inspired by [NetSpeedMonitor](https://netspeedmonitor.net)
+Show network speed by interface in lxpanel. Inspired by [NetSpeedMonitor](https://netspeedmonitor.net)
 
 # building and installing
 Build with CMake  
