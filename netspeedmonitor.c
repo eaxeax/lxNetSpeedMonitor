@@ -1,10 +1,10 @@
 #include <lxpanel/plugin.h>
-
 #include <stdio.h>
 #include <string.h>
 typedef struct
 {
-    GtkWidget* label;  //Plugin label
+    GtkWidget* label_tx;  //tx
+    GtkWidget* label_rx;  //rx
     char data[100];    //reusable string buffer
     guint timer;        //Timer
 
@@ -99,19 +99,24 @@ static gboolean update_cmd(netspeedmon* plugin)
     memset(plugin->data, 0, sizeof(plugin->data));
     if (notfound) {
         snprintf(plugin->data,sizeof(plugin->data),
-                 "U : %s %s\nD : %s %s",
-                 "...",rateunits[2*plugin->rateunit+plugin->preferbitpersec],
+                 "U : %s %s",
                  "...",rateunits[2*plugin->rateunit+plugin->preferbitpersec]);
+        gtk_label_set_text((GtkLabel*)plugin->label_tx, plugin->data);
+        snprintf(plugin->data,sizeof(plugin->data),
+                 "D : %s %s",
+                 "...",rateunits[2*plugin->rateunit+plugin->preferbitpersec]);
+        gtk_label_set_text((GtkLabel*)plugin->label_rx, plugin->data);
     }else
     {
         snprintf(plugin->data,sizeof(plugin->data),
-                 "U : %.1f %s\nD : %.1f %s",
-                 dlt_tx_human,rateunits[2*plugin->rateunit+plugin->preferbitpersec],
+                 "U : %.1f %s",
+                 dlt_tx_human,rateunits[2*plugin->rateunit+plugin->preferbitpersec]);
+        gtk_label_set_text((GtkLabel*)plugin->label_tx, plugin->data);
+        snprintf(plugin->data,sizeof(plugin->data),
+                 "D : %.1f %s",
                  dlt_rx_human,rateunits[2*plugin->rateunit+plugin->preferbitpersec]);
+        gtk_label_set_text((GtkLabel*)plugin->label_rx, plugin->data);
     }
-
-    gtk_label_set_text((GtkLabel*)plugin->label, plugin->data);
-
     return TRUE;
 }
 
@@ -132,45 +137,47 @@ GtkWidget* netspeed_new(LXPanel* panel, config_setting_t* settings)
     //Update count
     plugin->timer = g_timeout_add_seconds(1,(GSourceFunc)update_cmd, plugin);
 
-    //label
-    GtkWidget* pLabel = gtk_label_new("...");
+    //labels
+    GtkWidget* label = NULL,* vbox = NULL,* evbox = NULL;
 
-    //Show
-    gtk_widget_show(pLabel);
+    vbox = gtk_vbox_new(TRUE, 1);
 
-    //Container
-    GtkWidget* p = gtk_event_box_new();
+    label = gtk_label_new("U : ...");
+    gtk_misc_set_alignment(GTK_MISC(label), 0.0f, 0.5f);
+    plugin->label_tx = label;
+    gtk_box_pack_start(GTK_BOX(vbox), label, TRUE, TRUE, 0);
 
-     // our widget doesn't have a window...
-     // it is usually illegal to call gtk_widget_set_has_window() from application but for GtkEventBox it doesn't hurt
-     //gtk_widget_set_has_window(p, FALSE);
-
-    //Set width
-    gtk_container_set_border_width(GTK_CONTAINER(p), 1);
-
-    // add the label to the container
-    gtk_container_add(GTK_CONTAINER(p), pLabel);
-
-    // set the size we want
-    gtk_widget_set_size_request(p, 100, 25);
+    label = gtk_label_new("D : ...");
+    gtk_misc_set_alignment(GTK_MISC(label), 0.0f, 0.5f);
+    plugin->label_rx = label;
+    gtk_box_pack_start(GTK_BOX(vbox), label, TRUE, TRUE, 0);
 
     const char* tmp;
     if (!config_setting_lookup_string(settings, "iface", &tmp))
-        tmp = "eth0";
+        tmp = "wlan0";
     plugin->iface=g_strdup(tmp);
 
     plugin->rateunit=1;
     config_setting_lookup_int(settings,"rateunit",&plugin->rateunit);
     config_setting_lookup_int(settings,"preferbps",&plugin->preferbitpersec);
 
-    //Init
-    plugin->label = pLabel;
+
+    evbox = gtk_event_box_new();
+    //Set width
+    gtk_container_set_border_width(GTK_CONTAINER(evbox), 1);
+
+    //add vbox
+    gtk_container_add(GTK_CONTAINER(evbox), vbox);
+
+    gtk_widget_set_size_request(evbox, 100, 25);
+    //Show all
+    gtk_widget_show_all(evbox);
 
     //Bind struct
-    lxpanel_plugin_set_data(p, plugin, netspeed_delete);
+    lxpanel_plugin_set_data(evbox, plugin, netspeed_delete);
 
     //done!
-    return p;
+    return evbox;
 }
 
 gboolean apply_config(gpointer user_data)
@@ -205,7 +212,7 @@ GtkWidget* netspeed_config(LXPanel* panel, GtkWidget* p)
     return dlg;
 }
 
-FM_DEFINE_MODULE(lxpanel_gtk, NetSpeedMonitor);
+FM_DEFINE_MODULE(lxpanel_gtk, netspeedmonitor);
 
 //Descriptor
 LXPanelPluginInit fm_module_init_lxpanel_gtk =
@@ -213,5 +220,5 @@ LXPanelPluginInit fm_module_init_lxpanel_gtk =
     .name = "NetSpeedMonitor",
     .description = "Show network speed",
     .new_instance = netspeed_new,
-    .config=netspeed_config
+    .config = netspeed_config
 };
