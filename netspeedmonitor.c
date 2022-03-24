@@ -161,7 +161,6 @@ GtkWidget* netspeed_new(LXPanel* panel, config_setting_t* settings)
     config_setting_lookup_int(settings,"rateunit",&plugin->rateunit);
     config_setting_lookup_int(settings,"preferbps",&plugin->preferbitpersec);
 
-
     evbox = gtk_event_box_new();
     //Set width
     gtk_container_set_border_width(GTK_CONTAINER(evbox), 1);
