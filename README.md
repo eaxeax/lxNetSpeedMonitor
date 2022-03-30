@@ -1,6 +1,7 @@
 # lxNetSpeedMonitor
 Show network speed by interface in lxpanel. Inspired by [NetSpeedMonitor](https://netspeedmonitor.net)
 
+![configuration](gallery/config.png)
 # building and installing
 Install/update build dependencies.  
 Arch:  
