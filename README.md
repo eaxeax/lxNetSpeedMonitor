@@ -24,7 +24,7 @@ Usually:
 
 The folder should at least contain several *.so file which are the plugins like `weather.so, volume.so`, if not find it manually  
 
-`find / -wholename */lxpanel/plugins`  
+`find / 2>/dev/null -wholename "*/lxpanel/plugins"`  
 This may take some time depending on the size of your file system  
 
 Copy the build file to this directory:  
