@@ -7,7 +7,7 @@ Arch:
 `sudo pacman -Sy cmake base-devel`  
 
 Debian/Ubuntu and its derivatives:  
-`sudo apt install cmake base-devel`  
+`sudo apt install cmake build-essential`  
 
 If you are a cool kid not using the above distros, you probably know how to install development packages for your distro!
 
