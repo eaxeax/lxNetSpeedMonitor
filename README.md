@@ -20,9 +20,9 @@ Find the plugins location:
 Usually:  
 `/usr/lib/lxpanel/plugins` on Arch  
 `/usr/lib/<PROCESSOR_ARCHITECTURE>/lxpanel/plugins` on Debian/Ubuntu and its derivatives  
-**PROCESSOR_ARCHITECTURE can be x86_86 or i686 **
+**PROCESSOR_ARCHITECTURE can be x86_64 or i686**
 
-The folder should at least contain several *.so file which are the plugins like `weather.so, volume.so`, if not find it manually  
+The folder should at least contain several .so files which are the plugins like `weather.so, volume.so`, if not find it manually  
 
 `find / 2>/dev/null -wholename "*/lxpanel/plugins"`  
 This may take some time depending on the size of your file system  
