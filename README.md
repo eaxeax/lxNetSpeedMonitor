@@ -30,6 +30,9 @@ This may take some time depending on the size of your file system
 Copy the build file to this directory:  
 `sudo cp build/netspeedmonitor.so <PLUGINS_DIRECTORY>`  
 
+Restart lxpanel:  
+`lxpanelctl restart'
+
 # usage
 - Right click on panel then Panel Settings
 - Navigate to Panel Applets then click Add
