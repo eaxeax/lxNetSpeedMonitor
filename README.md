@@ -31,7 +31,7 @@ Copy the build file to this directory:
 `sudo cp build/netspeedmonitor.so <PLUGINS_DIRECTORY>`  
 
 Restart lxpanel:  
-`lxpanelctl restart'
+`lxpanelctl restart`
 
 # usage
 - Right click on panel then Panel Settings
