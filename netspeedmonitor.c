@@ -30,6 +30,20 @@ const char* rateunits[]=
     "KB/s","Kb/s",
     "MB/s","Mb/s",
 };
+
+void runScriptAndGetOutput(char *script, char *out, size_t size) {
+    FILE* in = popen(script, "r");
+    if (!in) {
+        perror("Failed to run script");
+        exit(1);
+    }
+    
+    fgets(upDownText, size-1, in);
+    
+    pclose(in);
+}
+
+
 #define ARY_SZ(arr) sizeof(arr) / sizeof(arr[0])
 static gboolean update_cmd(netspeedmon* plugin)
 {
@@ -95,16 +109,21 @@ static gboolean update_cmd(netspeedmon* plugin)
         }
     }
 
+    char ubuffer[200]{}, dbuffer[200]{};
+
+    runScriptAndGetOutput("script1.sh", ubuffer, sizeof(ubuffer));
+    runScriptAndGetOutput("script2.sh", dbuffer, sizeof(dbuffer));
+
     //clear then do final print
     memset(plugin->data, 0, sizeof(plugin->data));
     if (notfound) {
         snprintf(plugin->data,sizeof(plugin->data),
-                 "U : %s %s",
-                 "...",rateunits[2*plugin->rateunit+plugin->preferbitpersec]);
+                 "U : %s",
+                 ubuffer);
         gtk_label_set_text((GtkLabel*)plugin->label_tx, plugin->data);
         snprintf(plugin->data,sizeof(plugin->data),
-                 "D : %s %s",
-                 "...",rateunits[2*plugin->rateunit+plugin->preferbitpersec]);
+                 "D : %s",
+                 dbuffer);
         gtk_label_set_text((GtkLabel*)plugin->label_rx, plugin->data);
     }else
     {
