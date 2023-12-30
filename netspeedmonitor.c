@@ -38,7 +38,7 @@ void runScriptAndGetOutput(char *script, char *out, size_t size) {
         exit(1);
     }
     
-    fgets(upDownText, size-1, in);
+    fgets(out, size-1, in);
     
     pclose(in);
 }
@@ -128,12 +128,12 @@ static gboolean update_cmd(netspeedmon* plugin)
     }else
     {
         snprintf(plugin->data,sizeof(plugin->data),
-                 "U : %.1f %s",
-                 dlt_tx_human,rateunits[2*plugin->rateunit+plugin->preferbitpersec]);
+                 "U : %s",
+                 ubuffer);
         gtk_label_set_text((GtkLabel*)plugin->label_tx, plugin->data);
         snprintf(plugin->data,sizeof(plugin->data),
-                 "D : %.1f %s",
-                 dlt_rx_human,rateunits[2*plugin->rateunit+plugin->preferbitpersec]);
+                 "D : %s",
+                 dbuffer);
         gtk_label_set_text((GtkLabel*)plugin->label_rx, plugin->data);
     }
     return TRUE;
