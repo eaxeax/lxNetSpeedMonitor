@@ -109,7 +109,9 @@ static gboolean update_cmd(netspeedmon* plugin)
         }
     }
 
-    char ubuffer[200]{}, dbuffer[200]{};
+    char ubuffer[200], dbuffer[200];
+    memset(ubuffer, '\0', sizeof(ubuffer));
+    memset(dbuffer, '\0', sizeof(dbuffer));
 
     runScriptAndGetOutput("script1.sh", ubuffer, sizeof(ubuffer));
     runScriptAndGetOutput("script2.sh", dbuffer, sizeof(dbuffer));
